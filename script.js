@@ -1,15 +1,21 @@
-// Импорт класса InventoryManager
+// Импорт классов
 import { InventoryManager } from './patterns/InventoryManager.js'; 
+import { ProductFactory } from './patterns/ProductFactory.js'; 
 
-// Получаем элементы DOM
+// Инициализируем InventoryManager и ProductFactory
+const inventory = InventoryManager.getInstance();
+const productFactory = new ProductFactory();
+
+// Получаем элементы формы и списка для InventoryManager
 const productForm = document.getElementById('product-form');
 const productList = document.getElementById('product-list');
 const showProductsButton = document.getElementById('show-products');
 
-// Инициализируем InventoryManager
-const inventory = InventoryManager.getInstance();
+// Получаем элементы формы и списка для ProductFactory
+const fabricForm = document.getElementById('fabric-form');
+const fabricList = document.getElementById('fabric-list');
 
-// Добавляем продукт
+// Добавление продукта в инвентарь (InventoryManager)
 productForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
@@ -23,7 +29,7 @@ productForm.addEventListener('submit', (event) => {
   }
 });
 
-// Отображаем список продуктов
+// Отображение продуктов из инвентаря
 showProductsButton.addEventListener('click', () => {
   productList.innerHTML = ''; // Очищаем список
 
@@ -32,4 +38,24 @@ showProductsButton.addEventListener('click', () => {
     listItem.textContent = `${product.productName}: ${product.quantity}`;
     productList.appendChild(listItem);
   });
+});
+
+// Добавление продукта через фабрику (ProductFactory)
+fabricForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const productType = document.getElementById('fabric-type').value;
+  const productName = document.getElementById('fabric-name').value;
+  const productPrice = parseFloat(document.getElementById('fabric-price').value);
+
+  // Создаём продукт с помощью фабрики
+  const product = productFactory.create(productType, productName, productPrice);
+
+  // Добавляем продукт в список
+  const productItem = document.createElement('li');
+  productItem.textContent = product.getDescription();
+  fabricList.appendChild(productItem);
+
+  // Очищаем форму
+  fabricForm.reset();
 });
